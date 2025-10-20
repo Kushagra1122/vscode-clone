@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, CssBaseline, ThemeProvider, createTheme, IconButton, Tooltip, Typography } from '@mui/material';
 import * as Icons from '@mui/icons-material';
 import TreeViewNav from './components/TreeViewNav';
@@ -168,29 +168,8 @@ function App() {
     return tabContents;
   };
 
-  // Select first item on mount
-  useEffect(() => {
-    if (items.length > 0 && !selectedNode) {
-      const firstFile = findFirstFile(items);
-      if (firstFile) {
-        handleNodeSelect(firstFile);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const findFirstFile = (nodes: TreeItem[]): TreeItem | null => {
-    for (const node of nodes) {
-      if (node.type !== 'folder' && node.content) {
-        return node;
-      }
-      if (node.children) {
-        const found = findFirstFile(node.children);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
+  // Removed auto-selection of first file on mount
+  // Users can manually select files from the tree view
 
   return (
     <ThemeProvider theme={darkTheme}>
