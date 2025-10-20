@@ -1,0 +1,132 @@
+{
+  "items": [
+    {
+      "id": "root-1",
+      "label": "Project Root",
+      "type": "folder",
+      "children": [
+        {
+          "id": "folder-1",
+          "label": "src",
+          "type": "folder",
+          "children": [
+            {
+              "id": "file-1",
+              "label": "app.py",
+              "type": "py",
+              "content": "# Main application file\nimport sys\nfrom utils import helper_function\n\ndef main():\n    print('Hello World')\n    result = helper_function()\n    print(f'Result: {result}')\n\nif __name__ == '__main__':\n    main()",
+              "language": "python",
+              "tabContents": {
+                "preview": {
+                  "type": "text",
+                  "content": "**File Overview:**\nMain application entry point"
+                },
+                "documentation": {
+                  "type": "markdown",
+                  "content": "# app.py Documentation\nMain app entry point"
+                },
+                "execution": {
+                  "type": "log",
+                  "content": "[2024-10-20 10:30:15] Starting application..."
+                }
+              }
+            },
+            {
+              "id": "file-2",
+              "label": "utils.py",
+              "type": "py",
+              "content": "# Utility functions\nimport datetime\n\ndef helper_function():\n    return 'Helper'\n\ndef get_timestamp():\n    return datetime.datetime.now().isoformat()",
+              "language": "python",
+              "tabContents": {
+                "preview": {
+                  "type": "text",
+                  "content": "Utility module with helper functions"
+                },
+                "documentation": {
+                  "type": "markdown",
+                  "content": "# utils.py Documentation"
+                },
+                "execution": {
+                  "type": "log",
+                  "content": "[2024-10-20 09:15:22] Module loaded successfully"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "folder-2",
+          "label": "database",
+          "type": "folder",
+          "children": [
+            {
+              "id": "file-3",
+              "label": "queries.sql",
+              "type": "sql",
+              "content": "-- Sample SQL queries\nSELECT * FROM users WHERE active=1;",
+              "language": "sql",
+              "tabContents": {
+                "results": {
+                  "type": "table",
+                  "content": {
+                    "columns": ["id","username","email"],
+                    "rows": [[1,"john","john@example.com"],[2,"jane","jane@example.com"]]
+                  }
+                },
+                "explain": {
+                  "type": "tree",
+                  "content": "Query Plan..."
+                },
+                "history": {
+                  "type": "log",
+                  "content": "[2024-10-20 10:45:30] Query executed"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "folder-3",
+          "label": "docs",
+          "type": "folder",
+          "children": [
+            {
+              "id": "file-5",
+              "label": "README.md",
+              "type": "md",
+              "content": "# Project Documentation\nThis is a sample project.",
+              "language": "markdown",
+              "tabContents": {
+                "rendered": {
+                  "type": "html",
+                  "content": "<h1>Project Documentation</h1><p>This is a sample project.</p>"
+                },
+                "outline": {
+                  "type": "list",
+                  "content": "Document Outline"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "file-6",
+          "label": "config.json",
+          "type": "json",
+          "content": "{ \"app_name\": \"MyApp\", \"version\": \"1.0.0\" }",
+          "language": "json",
+          "tabContents": {
+            "formatted": {
+              "type": "json",
+              "content": "{ \"app_name\": \"MyApp\", \"version\": \"1.0.0\" }"
+            },
+            "schema": {
+              "type": "text",
+              "content": "Root object with app_name and version"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

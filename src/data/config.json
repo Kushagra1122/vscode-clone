@@ -1,0 +1,36 @@
+{
+  "tabConfig": {
+    "py": {
+      "tabs": [
+        { "id": "preview", "label": "Preview", "icon": "visibility" },
+        { "id": "documentation", "label": "Documentation", "icon": "description" },
+        { "id": "execution", "label": "Execution Log", "icon": "terminal" }
+      ]
+    },
+    "sql": {
+      "tabs": [
+        { "id": "results", "label": "Query Results", "icon": "table_chart" },
+        { "id": "explain", "label": "Explain Plan", "icon": "account_tree" },
+        { "id": "history", "label": "History", "icon": "history" }
+      ]
+    },
+    "json": {
+      "tabs": [
+        { "id": "formatted", "label": "Formatted View", "icon": "code" },
+        { "id": "schema", "label": "Schema", "icon": "schema" }
+      ]
+    },
+    "md": {
+      "tabs": [
+        { "id": "rendered", "label": "Rendered", "icon": "preview" },
+        { "id": "outline", "label": "Outline", "icon": "list" }
+      ]
+    },
+    "folder": {
+      "tabs": [
+        { "id": "summary", "label": "Summary", "icon": "folder_open" }
+      ]
+    }
+  },
+  "defaultTab": "preview"
+}
