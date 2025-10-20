@@ -56,7 +56,6 @@ const MonacoEditorPanel: React.FC<MonacoEditorPanelProps> = ({
         flexDirection: 'column',
       }}
     >
-      {/* File tab */}
       <Box
         sx={{
           backgroundColor: '#252526',
@@ -143,7 +142,6 @@ const MonacoEditorPanel: React.FC<MonacoEditorPanelProps> = ({
         </Box>
       </Box>
 
-      {/* Monaco Editor */}
       <Box sx={{ flex: 1 }}>
         <Editor
           height="100%"

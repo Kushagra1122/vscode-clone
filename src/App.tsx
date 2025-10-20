@@ -37,7 +37,6 @@ function App() {
   const handleNodeSelect = (node: TreeItem) => {
     setSelectedNode(node);
     
-    // Get tabs configuration for the node type
     const tabConfig = config.tabConfig[node.type];
     if (tabConfig) {
       setCurrentTabs(tabConfig.tabs);
@@ -108,7 +107,6 @@ function App() {
 
       setCurrentTabContents(updatedTabContents);
 
-      // Update the node in the tree
       const updateNodeInTree = (nodes: TreeItem[]): TreeItem[] => {
         return nodes.map(node => {
           if (node.id === selectedNode.id) {
@@ -168,16 +166,11 @@ function App() {
     return tabContents;
   };
 
-  // Removed auto-selection of first file on mount
-  // Users can manually select files from the tree view
-
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: '#1e1e1e', flexDirection: 'column' }}>
-        {/* Main Content Area */}
         <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-          {/* Activity Bar (Left edge) */}
           <Box
             sx={{
               width: '48px',
@@ -205,7 +198,6 @@ function App() {
             </Tooltip>
           </Box>
 
-          {/* Left Panel - Tree View (20%) */}
           <Box sx={{ width: 'calc(20% - 48px)', height: '100%', overflow: 'hidden' }}>
             <TreeViewNav 
               items={items} 
@@ -214,9 +206,7 @@ function App() {
             />
           </Box>
 
-          {/* Right Panel (80%) */}
           <Box sx={{ width: '80%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-            {/* Monaco Editor (80% of right panel) */}
             <Box sx={{ height: '80%', overflow: 'hidden' }}>
               {selectedNode && selectedNode.type !== 'folder' ? (
                 <MonacoEditorPanel
@@ -224,7 +214,6 @@ function App() {
                   language={selectedNode.language || 'plaintext'}
                   filename={selectedNode.label}
                   onContentChange={(newContent) => {
-                    // Update content in the tree
                     const updateContent = (nodes: TreeItem[]): TreeItem[] => {
                       return nodes.map(node => {
                         if (node.id === selectedNode.id) {
@@ -270,7 +259,6 @@ function App() {
               )}
             </Box>
 
-            {/* Tabbed Panel (20% of right panel) */}
             <Box sx={{ height: '20%', overflow: 'hidden' }}>
               {currentTabs.length > 0 ? (
                 <TabbedPanel
@@ -299,7 +287,6 @@ function App() {
           </Box>
         </Box>
 
-        {/* Status Bar */}
         <Box
           sx={{
             height: '22px',
@@ -326,7 +313,6 @@ function App() {
         </Box>
       </Box>
 
-      {/* Dialogs */}
       <AddNodeDialog
         open={addNodeDialogOpen}
         onClose={() => setAddNodeDialogOpen(false)}

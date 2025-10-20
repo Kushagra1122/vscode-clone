@@ -133,7 +133,6 @@ const TreeViewNav: React.FC<TreeViewNavProps> = ({ items, onNodeSelect, onAddNod
         overflow: 'hidden',
       }}
     >
-      {/* Header */}
       <Box
         sx={{
           px: 2,
@@ -172,7 +171,6 @@ const TreeViewNav: React.FC<TreeViewNavProps> = ({ items, onNodeSelect, onAddNod
         )}
       </Box>
 
-      {/* Tree View */}
       <Box sx={{ flex: 1, overflow: 'auto', px: 1, py: 1 }}>
         <SimpleTreeView
           onItemClick={(event, itemId) => handleNodeClick(itemId)}
