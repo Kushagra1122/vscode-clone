@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Box, CssBaseline, ThemeProvider, createTheme, IconButton, Tooltip, Typography } from '@mui/material';
+import { Box, CssBaseline, ThemeProvider, createTheme, IconButton, Tooltip, Typography, Drawer, useMediaQuery, useTheme } from '@mui/material';
 import * as Icons from '@mui/icons-material';
+import MenuIcon from '@mui/icons-material/Menu';
 import TreeViewNav from './components/TreeViewNav';
 import MonacoEditorPanel from './components/MonacoEditorPanel';
 import TabbedPanel from './components/TabbedPanel';
@@ -31,7 +32,11 @@ function App() {
   const [addNodeDialogOpen, setAddNodeDialogOpen] = useState(false);
   const [addContentDialogOpen, setAddContentDialogOpen] = useState(false);
   const [addNodeParentId, setAddNodeParentId] = useState<string | undefined>();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   const config = configData as Config;
 
   const handleNodeSelect = (node: TreeItem) => {
@@ -44,6 +49,11 @@ function App() {
     } else {
       setCurrentTabs([]);
       setCurrentTabContents({});
+    }
+    
+    // Close sidebar on mobile after selection
+    if (isMobile) {
+      setSidebarOpen(false);
     }
   };
 
@@ -166,48 +176,128 @@ function App() {
     return tabContents;
   };
 
+  const sidebarContent = (
+    <TreeViewNav 
+      items={items} 
+      onNodeSelect={handleNodeSelect}
+      onAddNode={handleAddNodeClick}
+    />
+  );
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: '#1e1e1e', flexDirection: 'column' }}>
         <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-          <Box
+          {/* Activity Bar - Hidden on mobile */}
+          {!isMobile && (
+            <Box
+              sx={{
+                width: '48px',
+                backgroundColor: '#333333',
+                borderRight: '1px solid #2d2d30',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                py: 1,
+              }}
+            >
+              <Tooltip title="Explorer" placement="right">
+                <IconButton
+                  sx={{
+                    color: '#ffffff',
+                    borderLeft: '2px solid #007acc',
+                    borderRadius: 0,
+                    width: '100%',
+                    py: 1.5,
+                    '&:hover': { backgroundColor: '#37373d' },
+                  }}
+                >
+                  <Icons.FolderOpen />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          )}
+
+          {/* Sidebar - Desktop/Tablet */}
+          {!isMobile && (
+            <Box 
+              sx={{ 
+                width: isTablet ? '250px' : 'calc(20% - 48px)', 
+                minWidth: '200px',
+                height: '100%', 
+                overflow: 'hidden' 
+              }}
+            >
+              {sidebarContent}
+            </Box>
+          )}
+
+          {/* Sidebar - Mobile Drawer */}
+          <Drawer
+            anchor="left"
+            open={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
             sx={{
-              width: '48px',
-              backgroundColor: '#333333',
-              borderRight: '1px solid #2d2d30',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              py: 1,
+              display: isMobile ? 'block' : 'none',
+              '& .MuiDrawer-paper': {
+                width: '80%',
+                maxWidth: '300px',
+                backgroundColor: '#252526',
+                borderRight: '1px solid #3e3e42',
+              },
             }}
           >
-            <Tooltip title="Explorer" placement="right">
-              <IconButton
+            {sidebarContent}
+          </Drawer>
+
+          {/* Main Content Area */}
+          <Box 
+            sx={{ 
+              flex: 1,
+              width: isMobile ? '100%' : isTablet ? 'calc(100% - 250px)' : '80%',
+              height: '100%', 
+              display: 'flex', 
+              flexDirection: 'column' 
+            }}
+          >
+            {/* Mobile Header with Menu Button */}
+            {isMobile && (
+              <Box
                 sx={{
-                  color: '#ffffff',
-                  borderLeft: '2px solid #007acc',
-                  borderRadius: 0,
-                  width: '100%',
-                  py: 1.5,
-                  '&:hover': { backgroundColor: '#37373d' },
+                  display: 'flex',
+                  alignItems: 'center',
+                  px: 1,
+                  py: 0.5,
+                  backgroundColor: '#252526',
+                  borderBottom: '1px solid #2d2d30',
+                  gap: 1,
                 }}
               >
-                <Icons.FolderOpen />
-              </IconButton>
-            </Tooltip>
-          </Box>
+                <IconButton
+                  onClick={() => setSidebarOpen(true)}
+                  sx={{
+                    color: '#cccccc',
+                    '&:hover': { backgroundColor: '#37373d' },
+                  }}
+                >
+                  <MenuIcon />
+                </IconButton>
+                {selectedNode && (
+                  <Typography sx={{ fontSize: '13px', color: '#cccccc', fontWeight: 500 }}>
+                    {selectedNode.label}
+                  </Typography>
+                )}
+              </Box>
+            )}
 
-          <Box sx={{ width: 'calc(20% - 48px)', height: '100%', overflow: 'hidden' }}>
-            <TreeViewNav 
-              items={items} 
-              onNodeSelect={handleNodeSelect}
-              onAddNode={handleAddNodeClick}
-            />
-          </Box>
-
-          <Box sx={{ width: '80%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ height: '80%', overflow: 'hidden' }}>
+            {/* Editor Area */}
+            <Box 
+              sx={{ 
+                height: isTablet ? '70%' : '80%', 
+                overflow: 'hidden' 
+              }}
+            >
               {selectedNode && selectedNode.type !== 'folder' ? (
                 <MonacoEditorPanel
                   content={selectedNode.content || ''}
@@ -259,7 +349,14 @@ function App() {
               )}
             </Box>
 
-            <Box sx={{ height: '20%', overflow: 'hidden' }}>
+            {/* Tabbed Panel - Responsive Height */}
+            <Box 
+              sx={{ 
+                height: isTablet ? '30%' : '20%',
+                minHeight: isMobile ? '150px' : '200px',
+                overflow: 'hidden' 
+              }}
+            >
               {currentTabs.length > 0 ? (
                 <TabbedPanel
                   tabs={currentTabs}
@@ -287,6 +384,7 @@ function App() {
           </Box>
         </Box>
 
+        {/* Status Bar - Responsive */}
         <Box
           sx={{
             height: '22px',
@@ -294,20 +392,40 @@ function App() {
             borderTop: '1px solid #005a9e',
             display: 'flex',
             alignItems: 'center',
-            px: 1.5,
-            fontSize: '12px',
+            px: isMobile ? 1 : 1.5,
+            fontSize: isMobile ? '10px' : '12px',
             color: '#ffffff',
-            gap: 2,
+            gap: isMobile ? 1 : 2,
+            overflow: 'hidden',
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Icons.CheckCircle sx={{ fontSize: 14 }} />
-            <span>VS Code Clone</span>
+            <Icons.CheckCircle sx={{ fontSize: isMobile ? 12 : 14 }} />
+            {!isMobile && <span>VS Code Clone</span>}
           </Box>
           {selectedNode && (
             <>
               <Box sx={{ borderLeft: '1px solid rgba(255,255,255,0.3)', height: '14px' }} />
-              <span>{selectedNode.language || 'plaintext'}</span>
+              <span style={{ 
+                overflow: 'hidden', 
+                textOverflow: 'ellipsis', 
+                whiteSpace: 'nowrap' 
+              }}>
+                {selectedNode.language || 'plaintext'}
+              </span>
+              {!isMobile && selectedNode.label && (
+                <>
+                  <Box sx={{ borderLeft: '1px solid rgba(255,255,255,0.3)', height: '14px' }} />
+                  <span style={{ 
+                    overflow: 'hidden', 
+                    textOverflow: 'ellipsis', 
+                    whiteSpace: 'nowrap',
+                    flex: 1
+                  }}>
+                    {selectedNode.label}
+                  </span>
+                </>
+              )}
             </>
           )}
         </Box>

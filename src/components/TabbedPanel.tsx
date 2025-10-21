@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Tabs, Tab, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Tooltip } from '@mui/material';
+import { Box, Tabs, Tab, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Tooltip, useTheme, useMediaQuery } from '@mui/material';
 import * as Icons from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
 import { TabContent, TabInfo, TableContent } from '../types';
@@ -13,6 +13,10 @@ interface TabbedPanelProps {
 
 const TabbedPanel: React.FC<TabbedPanelProps> = ({ tabs, tabContents, defaultTab, onAddContent }) => {
   const [activeTab, setActiveTab] = useState(defaultTab || tabs[0]?.id || '');
+  
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   React.useEffect(() => {
     setActiveTab(defaultTab || tabs[0]?.id || '');
@@ -36,35 +40,35 @@ const TabbedPanel: React.FC<TabbedPanelProps> = ({ tabs, tabContents, defaultTab
       case 'text':
       case 'log':
         return (
-          <Box sx={{ p: 3, fontFamily: 'monospace', fontSize: '13px', whiteSpace: 'pre-wrap', color: '#d4d4d4', lineHeight: 1.6 }}>
+          <Box sx={{ p: isMobile ? 1.5 : isTablet ? 2 : 3, fontFamily: 'monospace', fontSize: isMobile ? '11px' : '13px', whiteSpace: 'pre-wrap', color: '#d4d4d4', lineHeight: 1.6 }}>
             {content.content as string}
           </Box>
         );
 
       case 'markdown':
         return (
-          <Box sx={{ p: 3, color: '#d4d4d4', lineHeight: 1.7, '& code': { backgroundColor: '#2d2d30', px: 1, py: 0.5, borderRadius: '3px', fontFamily: 'monospace', fontSize: '12px' }, '& strong': { color: '#ffffff' } }}>
+          <Box sx={{ p: isMobile ? 1.5 : isTablet ? 2 : 3, color: '#d4d4d4', lineHeight: 1.7, fontSize: isMobile ? '12px' : '14px', '& code': { backgroundColor: '#2d2d30', px: 1, py: 0.5, borderRadius: '3px', fontFamily: 'monospace', fontSize: isMobile ? '10px' : '12px' }, '& strong': { color: '#ffffff' } }}>
             <div dangerouslySetInnerHTML={{ __html: (content.content as string).replace(/\n/g, '<br/>') }} />
           </Box>
         );
 
       case 'html':
         return (
-          <Box sx={{ p: 2, color: '#cccccc' }}>
+          <Box sx={{ p: isMobile ? 1 : 2, color: '#cccccc', fontSize: isMobile ? '12px' : '14px' }}>
             <div dangerouslySetInnerHTML={{ __html: content.content as string }} />
           </Box>
         );
 
       case 'tree':
         return (
-          <Box sx={{ p: 2, fontFamily: 'monospace', fontSize: '13px', whiteSpace: 'pre', color: '#cccccc' }}>
+          <Box sx={{ p: isMobile ? 1 : 2, fontFamily: 'monospace', fontSize: isMobile ? '11px' : '13px', whiteSpace: 'pre', color: '#cccccc', overflowX: 'auto' }}>
             {content.content as string}
           </Box>
         );
 
       case 'json':
         return (
-          <Box sx={{ p: 2, fontFamily: 'monospace', fontSize: '13px', whiteSpace: 'pre', color: '#cccccc', backgroundColor: '#1e1e1e' }}>
+          <Box sx={{ p: isMobile ? 1 : 2, fontFamily: 'monospace', fontSize: isMobile ? '11px' : '13px', whiteSpace: 'pre', color: '#cccccc', backgroundColor: '#1e1e1e', overflowX: 'auto' }}>
             {typeof content.content === 'string' ? content.content : JSON.stringify(content.content, null, 2)}
           </Box>
         );
@@ -72,13 +76,13 @@ const TabbedPanel: React.FC<TabbedPanelProps> = ({ tabs, tabContents, defaultTab
       case 'table':
         const tableData = content.content as TableContent;
         return (
-          <Box sx={{ p: 3 }}>
-            <TableContainer component={Paper} sx={{ backgroundColor: '#252526', maxHeight: 400, boxShadow: 'none', border: '1px solid #3e3e42' }}>
-              <Table size="small" stickyHeader>
+          <Box sx={{ p: isMobile ? 1 : isTablet ? 2 : 3 }}>
+            <TableContainer component={Paper} sx={{ backgroundColor: '#252526', maxHeight: isMobile ? 300 : 400, boxShadow: 'none', border: '1px solid #3e3e42' }}>
+              <Table size={isMobile ? 'small' : 'small'} stickyHeader>
                 <TableHead>
                   <TableRow>
                     {tableData.columns?.map((col, idx) => (
-                      <TableCell key={idx} sx={{ backgroundColor: '#2d2d30', color: '#ffffff', fontWeight: 600, borderBottom: '2px solid #007acc', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      <TableCell key={idx} sx={{ backgroundColor: '#2d2d30', color: '#ffffff', fontWeight: 600, borderBottom: '2px solid #007acc', fontSize: isMobile ? '10px' : '12px', textTransform: 'uppercase', letterSpacing: '0.5px', padding: isMobile ? '6px 8px' : '8px 16px' }}>
                         {col}
                       </TableCell>
                     ))}
@@ -88,7 +92,7 @@ const TabbedPanel: React.FC<TabbedPanelProps> = ({ tabs, tabContents, defaultTab
                   {tableData.rows?.map((row, rowIdx) => (
                     <TableRow key={rowIdx} sx={{ '&:hover': { backgroundColor: '#2a2d2e' }, transition: 'background-color 0.15s ease' }}>
                       {row.map((cell, cellIdx) => (
-                        <TableCell key={cellIdx} sx={{ color: '#d4d4d4', borderBottom: '1px solid #3e3e42', fontSize: '13px', fontFamily: 'monospace' }}>
+                        <TableCell key={cellIdx} sx={{ color: '#d4d4d4', borderBottom: '1px solid #3e3e42', fontSize: isMobile ? '10px' : '13px', fontFamily: 'monospace', padding: isMobile ? '6px 8px' : '8px 16px' }}>
                           {cell}
                         </TableCell>
                       ))}
@@ -98,7 +102,7 @@ const TabbedPanel: React.FC<TabbedPanelProps> = ({ tabs, tabContents, defaultTab
               </Table>
             </TableContainer>
             {tableData.rowCount !== undefined && (
-              <Typography sx={{ mt: 2, fontSize: '12px', color: '#858585', fontStyle: 'italic' }}>
+              <Typography sx={{ mt: isMobile ? 1 : 2, fontSize: isMobile ? '10px' : '12px', color: '#858585', fontStyle: 'italic' }}>
                 {tableData.rowCount} row{tableData.rowCount !== 1 ? 's' : ''} {tableData.executionTime && `• ${tableData.executionTime}`}
               </Typography>
             )}
@@ -107,7 +111,7 @@ const TabbedPanel: React.FC<TabbedPanelProps> = ({ tabs, tabContents, defaultTab
 
       case 'list':
         return (
-          <Box sx={{ p: 2, fontFamily: 'monospace', fontSize: '13px', whiteSpace: 'pre-wrap', color: '#cccccc' }}>
+          <Box sx={{ p: isMobile ? 1 : 2, fontFamily: 'monospace', fontSize: isMobile ? '11px' : '13px', whiteSpace: 'pre-wrap', color: '#cccccc' }}>
             {content.content as string}
           </Box>
         );
@@ -138,20 +142,24 @@ const TabbedPanel: React.FC<TabbedPanelProps> = ({ tabs, tabContents, defaultTab
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
+          variant={isMobile ? 'scrollable' : 'standard'}
+          scrollButtons={isMobile ? 'auto' : false}
+          allowScrollButtonsMobile
           sx={{
-            minHeight: 36,
+            minHeight: isMobile ? 32 : 36,
             flex: 1,
             '& .MuiTabs-indicator': {
               backgroundColor: '#007acc',
               height: '2px',
             },
             '& .MuiTab-root': {
-              minHeight: 36,
+              minHeight: isMobile ? 32 : 36,
+              minWidth: isMobile ? 'auto' : 90,
               textTransform: 'none',
-              fontSize: '13px',
+              fontSize: isMobile ? '11px' : '13px',
               color: '#969696',
               fontWeight: 400,
-              padding: '6px 12px',
+              padding: isMobile ? '4px 8px' : '6px 12px',
               transition: 'color 0.2s ease, background-color 0.2s ease',
               '&:hover': {
                 color: '#cccccc',
@@ -162,6 +170,12 @@ const TabbedPanel: React.FC<TabbedPanelProps> = ({ tabs, tabContents, defaultTab
                 fontWeight: 500,
               },
             },
+            '& .MuiTabs-scrollButtons': {
+              color: '#cccccc',
+              '&.Mui-disabled': {
+                opacity: 0.3,
+              },
+            },
           }}
         >
           {tabs.map((tab) => (
@@ -169,8 +183,8 @@ const TabbedPanel: React.FC<TabbedPanelProps> = ({ tabs, tabContents, defaultTab
               key={tab.id}
               value={tab.id}
               label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  {renderIcon(tab.icon)}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: isMobile ? 0.25 : 0.5 }}>
+                  {!isMobile && renderIcon(tab.icon)}
                   <span>{tab.label}</span>
                 </Box>
               }
@@ -184,8 +198,8 @@ const TabbedPanel: React.FC<TabbedPanelProps> = ({ tabs, tabContents, defaultTab
               size="small"
               onClick={onAddContent}
               sx={{
-                mr: 1,
-                padding: '6px',
+                mr: isMobile ? 0.5 : 1,
+                padding: isMobile ? '4px' : '6px',
                 transition: 'all 0.2s ease',
                 color: '#858585',
                 '&:hover': {
@@ -194,13 +208,29 @@ const TabbedPanel: React.FC<TabbedPanelProps> = ({ tabs, tabContents, defaultTab
                 },
               }}
             >
-              <AddIcon sx={{ fontSize: 16 }} />
+              <AddIcon sx={{ fontSize: isMobile ? 14 : 16 }} />
             </IconButton>
           </Tooltip>
         )}
       </Box>
 
-      <Box sx={{ flex: 1, overflow: 'auto', '&::-webkit-scrollbar': { width: '10px', height: '10px' }, '&::-webkit-scrollbar-thumb': { backgroundColor: '#424242', borderRadius: '5px' }, '&::-webkit-scrollbar-track': { backgroundColor: '#1e1e1e' } }}>
+      <Box 
+        sx={{ 
+          flex: 1, 
+          overflow: 'auto', 
+          '&::-webkit-scrollbar': { 
+            width: isMobile ? '6px' : '10px', 
+            height: isMobile ? '6px' : '10px' 
+          }, 
+          '&::-webkit-scrollbar-thumb': { 
+            backgroundColor: '#424242', 
+            borderRadius: '5px' 
+          }, 
+          '&::-webkit-scrollbar-track': { 
+            backgroundColor: '#1e1e1e' 
+          } 
+        }}
+      >
         {renderContent(tabContents[activeTab])}
       </Box>
     </Box>

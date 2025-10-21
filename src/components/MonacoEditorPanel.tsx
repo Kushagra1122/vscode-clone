@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, IconButton, Tooltip, Typography } from '@mui/material';
+import { Box, IconButton, Tooltip, Typography, useTheme, useMediaQuery } from '@mui/material';
 import Editor from '@monaco-editor/react';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
@@ -21,6 +21,10 @@ const MonacoEditorPanel: React.FC<MonacoEditorPanelProps> = ({
   const [isReadOnly, setIsReadOnly] = useState(true);
   const [currentContent, setCurrentContent] = useState(content);
   const [hasChanges, setHasChanges] = useState(false);
+  
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleEditorChange = (value: string | undefined) => {
     if (value !== undefined) {
@@ -60,55 +64,65 @@ const MonacoEditorPanel: React.FC<MonacoEditorPanelProps> = ({
         sx={{
           backgroundColor: '#252526',
           borderBottom: '1px solid #2d2d30',
-          px: 1.5,
+          px: isMobile ? 1 : 1.5,
           py: 0.5,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          minHeight: '36px',
+          minHeight: isMobile ? '32px' : '36px',
         }}
       >
         <Box
           sx={{
             backgroundColor: '#1e1e1e',
-            px: 2,
-            py: 0.75,
-            fontSize: '13px',
+            px: isMobile ? 1 : 2,
+            py: isMobile ? 0.5 : 0.75,
+            fontSize: isMobile ? '12px' : '13px',
             color: '#ffffff',
             borderTopLeftRadius: '3px',
             borderTopRightRadius: '3px',
             display: 'flex',
             alignItems: 'center',
-            gap: 1,
+            gap: isMobile ? 0.5 : 1,
             border: '1px solid transparent',
             borderBottom: 'none',
+            maxWidth: isMobile ? '60%' : '70%',
           }}
         >
           {hasChanges && (
             <Box
               component="span"
               sx={{
-                width: '6px',
-                height: '6px',
+                width: isMobile ? '5px' : '6px',
+                height: isMobile ? '5px' : '6px',
                 borderRadius: '50%',
                 backgroundColor: '#007acc',
                 display: 'inline-block',
+                flexShrink: 0,
               }}
             />
           )}
-          <Typography sx={{ fontSize: '13px', fontWeight: 400 }}>
+          <Typography 
+            sx={{ 
+              fontSize: isMobile ? '12px' : '13px', 
+              fontWeight: 400,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
             {filename || 'Untitled'}
           </Typography>
         </Box>
         
-        <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', gap: isMobile ? 0.25 : 0.5, alignItems: 'center' }}>
           <Tooltip title={isReadOnly ? 'Enable Editing' : 'Lock (Read-only)'} arrow>
             <IconButton
               size="small"
               onClick={toggleReadOnly}
               sx={{
                 color: isReadOnly ? '#858585' : '#007acc',
-                padding: '6px',
+                padding: isMobile ? '4px' : '6px',
                 transition: 'all 0.2s ease',
                 '&:hover': {
                   backgroundColor: '#37373d',
@@ -116,18 +130,18 @@ const MonacoEditorPanel: React.FC<MonacoEditorPanelProps> = ({
                 },
               }}
             >
-              {isReadOnly ? <LockIcon sx={{ fontSize: 16 }} /> : <EditIcon sx={{ fontSize: 16 }} />}
+              {isReadOnly ? <LockIcon sx={{ fontSize: isMobile ? 14 : 16 }} /> : <EditIcon sx={{ fontSize: isMobile ? 14 : 16 }} />}
             </IconButton>
           </Tooltip>
           
           {!isReadOnly && hasChanges && (
-            <Tooltip title="Save Changes (Ctrl+S)" arrow>
+            <Tooltip title={isMobile ? 'Save' : 'Save Changes (Ctrl+S)'} arrow>
               <IconButton
                 size="small"
                 onClick={handleSave}
                 sx={{
                   color: '#007acc',
-                  padding: '6px',
+                  padding: isMobile ? '4px' : '6px',
                   transition: 'all 0.2s ease',
                   '&:hover': {
                     backgroundColor: '#37373d',
@@ -135,7 +149,7 @@ const MonacoEditorPanel: React.FC<MonacoEditorPanelProps> = ({
                   },
                 }}
               >
-                <SaveIcon sx={{ fontSize: 16 }} />
+                <SaveIcon sx={{ fontSize: isMobile ? 14 : 16 }} />
               </IconButton>
             </Tooltip>
           )}
@@ -151,8 +165,8 @@ const MonacoEditorPanel: React.FC<MonacoEditorPanelProps> = ({
           theme="vs-dark"
           options={{
             readOnly: isReadOnly,
-            minimap: { enabled: true },
-            fontSize: 14,
+            minimap: { enabled: !isMobile && !isTablet },
+            fontSize: isMobile ? 12 : isTablet ? 13 : 14,
             lineNumbers: 'on',
             scrollBeyondLastLine: false,
             automaticLayout: true,
@@ -163,7 +177,17 @@ const MonacoEditorPanel: React.FC<MonacoEditorPanelProps> = ({
             cursorBlinking: 'smooth',
             renderLineHighlight: 'all',
             fontFamily: "'Menlo', 'Monaco', 'Courier New', monospace",
-            fontLigatures: true,
+            fontLigatures: !isMobile,
+            folding: !isMobile,
+            lineDecorationsWidth: isMobile ? 5 : 10,
+            lineNumbersMinChars: isMobile ? 3 : 5,
+            glyphMargin: !isMobile,
+            scrollbar: {
+              vertical: 'auto',
+              horizontal: 'auto',
+              verticalScrollbarSize: isMobile ? 8 : 10,
+              horizontalScrollbarSize: isMobile ? 8 : 10,
+            },
           }}
         />
       </Box>

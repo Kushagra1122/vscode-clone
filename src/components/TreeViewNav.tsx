@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, IconButton, Tooltip } from '@mui/material';
+import { Box, Typography, IconButton, Tooltip, useTheme, useMediaQuery } from '@mui/material';
 import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import * as Icons from '@mui/icons-material';
@@ -13,6 +13,9 @@ interface TreeViewNavProps {
 }
 
 const TreeViewNav: React.FC<TreeViewNavProps> = ({ items, onNodeSelect, onAddNode }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
   const getFileIcon = (type: string) => {
     const iconMap: Record<string, any> = {
       py: Icons.Code,
@@ -82,16 +85,19 @@ const TreeViewNav: React.FC<TreeViewNavProps> = ({ items, onNodeSelect, onAddNod
             {getFileIcon(node.type)}
             <Typography 
               sx={{ 
-                fontSize: '13px', 
+                fontSize: isMobile ? '12px' : '13px', 
                 color: '#cccccc', 
                 flexGrow: 1,
                 fontWeight: node.type === 'folder' ? 500 : 400,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
               }}
             >
               {node.label}
             </Typography>
             {node.type === 'folder' && onAddNode && (
-              <Tooltip title="Add file/folder" placement="right">
+              <Tooltip title="Add file/folder" placement="right" arrow>
                 <IconButton
                   className="add-button"
                   size="small"
@@ -100,7 +106,7 @@ const TreeViewNav: React.FC<TreeViewNavProps> = ({ items, onNodeSelect, onAddNod
                     onAddNode(node.id);
                   }}
                   sx={{
-                    opacity: 0,
+                    opacity: isMobile ? 1 : 0,
                     transition: 'opacity 0.2s',
                     padding: '3px',
                     marginLeft: 'auto',
@@ -109,7 +115,7 @@ const TreeViewNav: React.FC<TreeViewNavProps> = ({ items, onNodeSelect, onAddNod
                     },
                   }}
                 >
-                  <AddIcon sx={{ fontSize: 15, color: '#cccccc' }} />
+                  <AddIcon sx={{ fontSize: isMobile ? 14 : 15, color: '#cccccc' }} />
                 </IconButton>
               </Tooltip>
             )}
@@ -135,8 +141,8 @@ const TreeViewNav: React.FC<TreeViewNavProps> = ({ items, onNodeSelect, onAddNod
     >
       <Box
         sx={{
-          px: 2,
-          py: 1.5,
+          px: isMobile ? 1.5 : 2,
+          py: isMobile ? 1 : 1.5,
           borderBottom: '1px solid #3e3e42',
           display: 'flex',
           justifyContent: 'space-between',
@@ -145,7 +151,7 @@ const TreeViewNav: React.FC<TreeViewNavProps> = ({ items, onNodeSelect, onAddNod
         }}
       >
         <Typography sx={{ 
-          fontSize: '11px', 
+          fontSize: isMobile ? '10px' : '11px', 
           fontWeight: 700, 
           color: '#cccccc', 
           textTransform: 'uppercase',
@@ -154,31 +160,49 @@ const TreeViewNav: React.FC<TreeViewNavProps> = ({ items, onNodeSelect, onAddNod
           Explorer
         </Typography>
         {onAddNode && (
-          <Tooltip title="Add file/folder to root">
+          <Tooltip title="Add file/folder to root" arrow>
             <IconButton
               size="small"
               onClick={() => onAddNode()}
               sx={{
-                padding: '4px',
+                padding: isMobile ? '3px' : '4px',
                 '&:hover': {
                   backgroundColor: '#37373d',
                 },
               }}
             >
-              <AddIcon sx={{ fontSize: 16, color: '#cccccc' }} />
+              <AddIcon sx={{ fontSize: isMobile ? 14 : 16, color: '#cccccc' }} />
             </IconButton>
           </Tooltip>
         )}
       </Box>
 
-      <Box sx={{ flex: 1, overflow: 'auto', px: 1, py: 1 }}>
+      <Box 
+        sx={{ 
+          flex: 1, 
+          overflow: 'auto', 
+          px: isMobile ? 0.5 : 1, 
+          py: isMobile ? 0.5 : 1,
+          '&::-webkit-scrollbar': {
+            width: '8px',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: '#424242',
+            borderRadius: '4px',
+          },
+          '&::-webkit-scrollbar-track': {
+            backgroundColor: '#252526',
+          },
+        }}
+      >
         <SimpleTreeView
           onItemClick={(event, itemId) => handleNodeClick(itemId)}
           sx={{
             '& .MuiTreeItem-content': {
-              padding: '3px 6px',
+              padding: isMobile ? '2px 4px' : '3px 6px',
               borderRadius: '4px',
               transition: 'background-color 0.15s ease',
+              minHeight: isMobile ? '32px' : '28px',
               '&:hover': {
                 backgroundColor: '#2a2d2e',
               },
@@ -193,16 +217,16 @@ const TreeViewNav: React.FC<TreeViewNavProps> = ({ items, onNodeSelect, onAddNod
               },
             },
             '& .MuiTreeItem-iconContainer': {
-              width: '18px',
-              marginRight: '6px',
+              width: isMobile ? '16px' : '18px',
+              marginRight: isMobile ? '4px' : '6px',
               '& svg': {
-                fontSize: '16px',
+                fontSize: isMobile ? '14px' : '16px',
                 color: '#cccccc',
               },
             },
             '& .MuiTreeItem-group': {
-              marginLeft: '12px',
-              paddingLeft: '12px',
+              marginLeft: isMobile ? '8px' : '12px',
+              paddingLeft: isMobile ? '8px' : '12px',
               borderLeft: '1px solid #3e3e42',
             },
           }}
