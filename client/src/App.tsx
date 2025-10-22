@@ -7,6 +7,7 @@ import MonacoEditorPanel from './components/MonacoEditorPanel';
 import TabbedPanel from './components/TabbedPanel';
 import AddNodeDialog from './components/AddNodeDialog';
 import AddTabContentDialog from './components/AddTabContentDialog';
+import ScheduleFormDialog, { ScheduleFormData } from './components/ScheduleFormDialog';
 import { TreeItem, Config, ContentData, TabInfo, TabContent } from './types';
 import contentData from './data/content.json';
 import configData from './data/config.json';
@@ -31,6 +32,7 @@ function App() {
   const [currentTabContents, setCurrentTabContents] = useState<Record<string, TabContent>>({});
   const [addNodeDialogOpen, setAddNodeDialogOpen] = useState(false);
   const [addContentDialogOpen, setAddContentDialogOpen] = useState(false);
+  const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
   const [addNodeParentId, setAddNodeParentId] = useState<string | undefined>();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -139,6 +141,12 @@ function App() {
     }
   };
 
+  const handleScheduleSubmit = (formData: ScheduleFormData) => {
+    console.log('Schedule created:', formData);
+    // You can add logic here to save the schedule data
+    // For example, add it to a state array or send it to a backend
+  };
+
   const getLanguageFromType = (type: string): string => {
     const languageMap: Record<string, string> = {
       py: 'python',
@@ -181,6 +189,7 @@ function App() {
       items={items} 
       onNodeSelect={handleNodeSelect}
       onAddNode={handleAddNodeClick}
+      onScheduleClick={() => setScheduleDialogOpen(true)}
     />
   );
 
@@ -442,6 +451,12 @@ function App() {
         onClose={() => setAddContentDialogOpen(false)}
         onAdd={handleAddTabContent}
         availableTabs={currentTabs}
+      />
+
+      <ScheduleFormDialog
+        open={scheduleDialogOpen}
+        onClose={() => setScheduleDialogOpen(false)}
+        onSubmit={handleScheduleSubmit}
       />
     </ThemeProvider>
   );

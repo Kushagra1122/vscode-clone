@@ -4,15 +4,17 @@ import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import * as Icons from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
+import ScheduleIcon from '@mui/icons-material/Schedule';
 import { TreeItem as TreeItemType } from '../types';
 
 interface TreeViewNavProps {
   items: TreeItemType[];
   onNodeSelect: (node: TreeItemType) => void;
   onAddNode?: (parentId?: string) => void;
+  onScheduleClick?: () => void;
 }
 
-const TreeViewNav: React.FC<TreeViewNavProps> = ({ items, onNodeSelect, onAddNode }) => {
+const TreeViewNav: React.FC<TreeViewNavProps> = ({ items, onNodeSelect, onAddNode, onScheduleClick }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   
@@ -159,22 +161,40 @@ const TreeViewNav: React.FC<TreeViewNavProps> = ({ items, onNodeSelect, onAddNod
         }}>
           Explorer
         </Typography>
-        {onAddNode && (
-          <Tooltip title="Add file/folder to root" arrow>
-            <IconButton
-              size="small"
-              onClick={() => onAddNode()}
-              sx={{
-                padding: isMobile ? '3px' : '4px',
-                '&:hover': {
-                  backgroundColor: '#37373d',
-                },
-              }}
-            >
-              <AddIcon sx={{ fontSize: isMobile ? 14 : 16, color: '#cccccc' }} />
-            </IconButton>
-          </Tooltip>
-        )}
+        <Box sx={{ display: 'flex', gap: 0.5 }}>
+          {onScheduleClick && (
+            <Tooltip title="Create Schedule" arrow>
+              <IconButton
+                size="small"
+                onClick={onScheduleClick}
+                sx={{
+                  padding: isMobile ? '3px' : '4px',
+                  '&:hover': {
+                    backgroundColor: '#37373d',
+                  },
+                }}
+              >
+                <ScheduleIcon sx={{ fontSize: isMobile ? 14 : 16, color: '#cccccc' }} />
+              </IconButton>
+            </Tooltip>
+          )}
+          {onAddNode && (
+            <Tooltip title="Add file/folder to root" arrow>
+              <IconButton
+                size="small"
+                onClick={() => onAddNode()}
+                sx={{
+                  padding: isMobile ? '3px' : '4px',
+                  '&:hover': {
+                    backgroundColor: '#37373d',
+                  },
+                }}
+              >
+                <AddIcon sx={{ fontSize: isMobile ? 14 : 16, color: '#cccccc' }} />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
       </Box>
 
       <Box 
