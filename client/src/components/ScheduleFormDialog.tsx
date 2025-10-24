@@ -42,18 +42,47 @@ const ScheduleFormDialog: React.FC<ScheduleFormDialogProps> = ({ open, onClose, 
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (formData.name.trim() && formData.cron.trim()) {
-      onSubmit(formData);
-      // Reset form
-      setFormData({
-        name: '',
-        cron: '',
-        nextRun: '',
-        startDate: '',
-        endDate: '',
-      });
-      onClose();
+      try {
+        // Send to FastAPI backend
+        const response = await fetch('http://localhost:8000/tasks', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            cron: formData.cron,
+            next_run: formData.nextRun || new Date().toISOString(),
+            start_date: formData.startDate || new Date().toISOString().split('T')[0],
+            end_date: formData.endDate || new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create schedule');
+        }
+
+        const createdSchedule = await response.json();
+        console.log('Schedule created:', createdSchedule);
+
+        // Also call parent onSubmit for local state update
+        onSubmit(formData);
+
+        // Reset form
+        setFormData({
+          name: '',
+          cron: '',
+          nextRun: '',
+          startDate: '',
+          endDate: '',
+        });
+        onClose();
+      } catch (error) {
+        console.error('Error creating schedule:', error);
+        alert('Failed to create schedule. Please try again.');
+      }
     }
   };
 

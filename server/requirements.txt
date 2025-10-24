@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+motor
+redis
+python-dotenv
+apscheduler
+pydantic[email]
+pytz
+croniter
+celery
+celery[redis]
